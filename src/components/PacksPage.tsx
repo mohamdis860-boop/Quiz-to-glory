@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { PackResult, PityState, Player } from "../types";
 import {
-  RARITY_CONFIG,
   PITY_GOLD_THRESHOLD,
   PITY_ICON_THRESHOLD,
 } from "../data/rarity";
@@ -31,7 +30,7 @@ export default function PacksPage({
   onOpenPack,
   onPackOpened,
 }: PacksPageProps) {
-  const [feedback, setFeedback] = useState("");
+  const [isOpening, setIsOpening] = useState(false);
   const [error, setError] = useState("");
   const [lastPull, setLastPull] = useState<LastPull | null>(null);
 
@@ -40,48 +39,38 @@ export default function PacksPage({
 
   function handleOpenPack() {
     setError("");
-    setFeedback("");
+    setLastPull(null);
+    setIsOpening(true);
 
-    const result = onOpenPack();
+    // بنعمل تأخير ثانية ونص عشان يبان أنيميشن فتح الباك
+    setTimeout(() => {
+      const result = onOpenPack();
+      setIsOpening(false);
 
-    if (result.type === "error") {
-      setError(result.message);
-      setLastPull(null);
-      return;
-    }
+      if (result.type === "error") {
+        setError(result.message);
+        return;
+      }
 
-    onPackOpened();
+      onPackOpened();
 
-    const pityTriggered = result.pityTriggered ?? null;
-
-    if (result.type === "duplicate") {
-      setFeedback(
-        `Duplicate! You already have ${result.player.name}. Auto-sold for 🪙 ${result.coins}.`
-      );
-      setLastPull({
-        player: result.player,
-        duplicate: true,
-        coins: result.coins,
-        pityTriggered,
-      });
-      return;
-    }
-
-    const rarityLabel = RARITY_CONFIG[result.player.rarity].label;
-    const pityText = pityTriggered
-      ? ` 🛡️ Pity triggered! Guaranteed ${
-          pityTriggered === "icon" ? "Icon" : "Gold"
-        }.`
-      : "";
-    setFeedback(
-      `You pulled a ${rarityLabel} ${result.player.position} — ${result.player.name} (${result.player.rating} OVR)!${pityText}`
-    );
-    setLastPull({
-      player: result.player,
-      duplicate: false,
-      coins: 0,
-      pityTriggered,
-    });
+      const pityTriggered = result.pityTriggered ?? null;
+      if (result.type === "duplicate") {
+        setLastPull({
+          player: result.player,
+          duplicate: true,
+          coins: result.coins,
+          pityTriggered,
+        });
+      } else {
+        setLastPull({
+          player: result.player,
+          duplicate: false,
+          coins: 0,
+          pityTriggered,
+        });
+      }
+    }, 1500); // ثانية ونص
   }
 
   return (
@@ -93,35 +82,59 @@ export default function PacksPage({
       <h1>Player Packs 🃏</h1>
 
       <div className="pack-panel">
-        <div className="pack-art">✨🃏✨</div>
-        <h2>Starter Player Pack</h2>
-        <p>Discover a new player to add to your collection.</p>
-        <p className="pack-price">🪙 100 coins</p>
-        <p className="small-note">Your balance: 🪙 {coins.toLocaleString()}</p>
-        <button className="primary-button" onClick={handleOpenPack}>
-          Open Pack
-        </button>
-        <p className="small-note">Packs opened: {packsOpened}</p>
+        {/* شاشة عرض النتيجة (لما الباك يتفتح) */}
+        {lastPull ? (
+          <div className="pack-reveal-container">
+            <h2 className="reveal-title">
+              {lastPull.duplicate ? "Duplicate Player!" : "New Player Unlocked!"}
+            </h2>
+            
+            <div className="pack-result-large">
+              <PlayerCard player={lastPull.player} />
+            </div>
 
-        {feedback && <p className="feedback">{feedback}</p>}
-        {error && <p className="feedback feedback-error">{error}</p>}
-
-        {lastPull && (
-          <div className="pack-result" key={packsOpened}>
-            <PlayerCard player={lastPull.player} />
             {lastPull.duplicate && (
-              <span className="duplicate-badge">
-                DUPLICATE · +🪙 {lastPull.coins}
-              </span>
+              <p className="feedback feedback-error">
+                You already have {lastPull.player.name}. Auto-sold for 🪙 {lastPull.coins}!
+              </p>
             )}
             {lastPull.pityTriggered && (
-              <span className="pity-badge">
-                🛡️ PITY · {lastPull.pityTriggered.toUpperCase()}
+              <span className="pity-badge" style={{ marginTop: '10px', display: 'inline-block' }}>
+                🛡️ PITY TRIGGERED · {lastPull.pityTriggered.toUpperCase()}
               </span>
             )}
+
+            <button className="primary-button" onClick={() => setLastPull(null)} style={{ marginTop: '20px' }}>
+              Open Another Pack
+            </button>
           </div>
+        ) : (
+          /* شاشة فتح الباك الأساسية */
+          <>
+            <div className={`pack-art ${isOpening ? "pack-opening-anim" : ""}`}>
+              {isOpening ? "✨ ⚡ ✨" : "✨🃏✨"}
+            </div>
+            
+            <h2>Starter Player Pack</h2>
+            <p>Discover a new player to add to your collection.</p>
+            <p className="pack-price">🪙 100 coins</p>
+            <p className="small-note">Your balance: 🪙 {coins.toLocaleString()}</p>
+            
+            <button 
+              className="primary-button" 
+              onClick={handleOpenPack} 
+              disabled={isOpening}
+              style={{ opacity: isOpening ? 0.5 : 1 }}
+            >
+              {isOpening ? "Opening..." : "Open Pack"}
+            </button>
+
+            {error && <p className="feedback feedback-error">{error}</p>}
+            <p className="small-note">Packs opened: {packsOpened}</p>
+          </>
         )}
 
+        {/* شريط الـ Pity */}
         <div className="pity-panel">
           <p className="pity-title">🛡️ Pity Protection</p>
           <div className="pity-row">
@@ -129,11 +142,7 @@ export default function PacksPage({
             <div className="pity-bar">
               <div
                 className="pity-fill pity-fill-gold"
-                style={{
-                  width: `${
-                    (pity.packsSinceGold / PITY_GOLD_THRESHOLD) * 100
-                  }%`,
-                }}
+                style={{ width: `${(pity.packsSinceGold / PITY_GOLD_THRESHOLD) * 100}%` }}
               />
             </div>
             <span className="pity-count">
@@ -145,31 +154,12 @@ export default function PacksPage({
             <div className="pity-bar">
               <div
                 className="pity-fill pity-fill-icon"
-                style={{
-                  width: `${
-                    (pity.packsSinceIcon / PITY_ICON_THRESHOLD) * 100
-                  }%`,
-                }}
+                style={{ width: `${(pity.packsSinceIcon / PITY_ICON_THRESHOLD) * 100}%` }}
               />
             </div>
             <span className="pity-count">
               {iconRemaining === 1 ? "Next!" : `${iconRemaining} packs`}
             </span>
-          </div>
-          <p className="pity-note">
-            Pity counters reset when you pull the corresponding rarity. Icons
-            also reset the Gold counter.
-          </p>
-        </div>
-
-        <div className="rarity-legend">
-          <p className="small-note">Base drop rates (before pity)</p>
-          <div className="rarity-legend-list">
-            {(["icon", "gold", "silver", "bronze"] as const).map((r) => (
-              <span key={r} className={`rarity-chip rarity-chip-${r}`}>
-                {RARITY_CONFIG[r].label} · {RARITY_CONFIG[r].weight}%
-              </span>
-            ))}
           </div>
         </div>
       </div>

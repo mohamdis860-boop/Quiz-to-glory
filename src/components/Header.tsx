@@ -1,5 +1,5 @@
 type HeaderProps = {
-  coins: number;
+  coins: number | null;
   onGoHome: () => void;
 };
 
@@ -16,7 +16,8 @@ export default function Header({ coins, onGoHome }: HeaderProps) {
       <div className="header-actions">
         <div className="coin-balance">
           <span>🪙</span>
-          <strong>{coins.toLocaleString()}</strong>
+          {/* هنا حطينا (coins || 0) عشان لو بقت null يقراها صفر */}
+          <strong>{(coins || 0).toLocaleString()}</strong>
         </div>
         <div className="profile">
           <span className="avatar">👤</span>

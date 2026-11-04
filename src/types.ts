@@ -11,12 +11,25 @@ export type Page =
 // ── Players & Rarity ──────────────────────────────────
 export type Rarity = "bronze" | "silver" | "gold" | "icon";
 
+export type PlayerStats = {
+  pace: number;
+  shooting: number;
+  passing: number;
+  dribbling: number;
+  defending: number;
+  physical: number;
+};
+
 export type Player = {
   id: string;
   name: string;
   position: string;
   rating: number;
   rarity: Rarity;
+  club?: string;
+  nationality?: string; 
+  photoUrl?: string;
+  stats?: PlayerStats;
 };
 
 // ── Squad / Formation ─────────────────────────────────
@@ -25,13 +38,13 @@ export type Formation = "4-3-3" | "4-4-2" | "4-2-3-1";
 export type Slot = {
   id: string;
   position: string;
-  x: number; // 0–100
-  y: number; // 0–100
+  x: number;
+  y: number;
 };
 
 export type Squad = {
   formation: Formation;
-  assignments: Record<string, string | null>; // slotId → playerId
+  assignments: Record<string, string | null>;
 };
 
 // ── Pity System ───────────────────────────────────────
@@ -51,7 +64,7 @@ export type PackResult =
     }
   | { type: "error"; message: string };
 
-// ── Quiz / Questions ──────────────────────────────────
+// ── Quiz ──────────────────────────────────────────────
 export type Category =
   | "world-cup"
   | "clubs"
@@ -87,7 +100,7 @@ export type DailyState = {
   loginClaimed: boolean;
 };
 
-// ── Stats (for Achievements) ──────────────────────────
+// ── Stats ─────────────────────────────────────────────
 export type Stats = {
   quizzesCompleted: number;
   correctAnswers: number;
