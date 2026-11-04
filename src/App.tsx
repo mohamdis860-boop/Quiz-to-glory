@@ -19,14 +19,12 @@ import {
   SELL_VALUES,
 } from "./data/rarity";
 import { getMission, getLoginReward } from "./data/missions";
-import {
-  ACHIEVEMENTS,
-  type AchievementContext,
-} from "./data/achievements";
+import { ACHIEVEMENTS, type AchievementContext } from "./data/achievements";
 import { createAutoSquad, createEmptySquad } from "./utils/squad";
 import { generateId } from "./utils/id";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useDailyState } from "./hooks/useDailyState";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./components/HomePage";
@@ -41,59 +39,35 @@ function App() {
   const [page, setPage] = useState<Page>("home");
 
   const [coins, setCoins] = useLocalStorage<number>("qtg:coins", 200);
-  const [players, setPlayers] = useLocalStorage<Player[]>(
-    "qtg:players",
-    initialPlayers
-  );
-  const [packsOpened, setPacksOpened] = useLocalStorage<number>(
-    "qtg:packsOpened",
-    0
-  );
-  const [squad, setSquad] = useLocalStorage<Squad>(
-    "qtg:squad",
-    createEmptySquad("4-3-3")
-  );
-  const [squadInitialized, setSquadInitialized] = useLocalStorage<boolean>(
-    "qtg:squadInit",
-    false
-  );
-  const [pity, setPity] = useLocalStorage<PityState>(
-    "qtg:pity",
-    INITIAL_PITY
-  );
+  const [players, setPlayers] = useLocalStorage<Player[]>("qtg:players", initialPlayers);
+  const [packsOpened, setPacksOpened] = useLocalStorage<number>("qtg:packsOpened", 0);
+  const [squad, setSquad] = useLocalStorage<Squad>("qtg:squad", createEmptySquad("4-3-3"));
+  const [squadInitialized, setSquadInitialized] = useLocalStorage<boolean>("qtg:squadInit", false);
+  const [pity, setPity] = useLocalStorage<PityState>("qtg:pity", INITIAL_PITY);
   const [stats, setStats] = useLocalStorage<Stats>("qtg:stats", INITIAL_STATS);
-  const [claimedAchievements, setClaimedAchievements] = useLocalStorage<
-    Record<string, boolean>
-  >("qtg:achievementsClaimed", {});
+  const [claimedAchievements, setClaimedAchievements] = useLocalStorage<Record<string, boolean>>("qtg:achievementsClaimed", {});
 
   const { daily, update: updateDaily, trackProgress } = useDailyState();
 
-  // Migrate + autofill on first mount
   useEffect(() => {
     if (squadInitialized) return;
     let workingPlayers = players;
     if (players.some((p) => !p.id)) {
-      workingPlayers = players.map((p) =>
-        p.id ? p : { ...p, id: generateId() }
-      );
+      workingPlayers = players.map((p) => (p.id ? p : { ...p, id: generateId() }));
       setPlayers(workingPlayers);
     }
     if (workingPlayers.length > 0) {
       setSquad(createAutoSquad("4-3-3", workingPlayers));
     }
     setSquadInitialized(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Track highest login streak
   useEffect(() => {
     if (daily.streak > stats.highestStreak) {
       setStats((prev) => ({ ...prev, highestStreak: daily.streak }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [daily.streak]);
 
-  // ── Build achievement context ─────────────────────────
   const achievementCtx: AchievementContext = useMemo(
     () => ({ stats, players, daily, packsOpened, squad }),
     [stats, players, daily, packsOpened, squad]
@@ -105,13 +79,7 @@ function App() {
         const progress = Math.min(a.getProgress(achievementCtx), a.goal);
         const isComplete = progress >= a.goal;
         const isClaimed = !!claimedAchievements[a.id];
-        return {
-          achievement: a,
-          progress,
-          isComplete,
-          isClaimed,
-          canClaim: isComplete && !isClaimed,
-        };
+        return { achievement: a, progress, isComplete, isClaimed, canClaim: isComplete && !isClaimed };
       }),
     [achievementCtx, claimedAchievements]
   );
@@ -119,18 +87,10 @@ function App() {
   const claimableCount = achievementList.filter((x) => x.canClaim).length;
   const unlockedCount = achievementList.filter((x) => x.isComplete).length;
 
-  function goHome() {
-    setPage("home");
-  }
+  function goHome() { setPage("home"); }
 
   function handleOpenPack(): PackResult {
-    if (coins < 100) {
-      return {
-        type: "error",
-        message: "Not enough coins! Play the quiz to earn more.",
-      };
-    }
-
+    if (coins < 100) return { type: "error", message: "Not enough coins! Play the quiz to earn more." };
     const { rarity, newPity, pityTriggered } = rollWithPity(pity);
     const newPlayer = createRandomPlayer(rarity);
     const duplicate = players.find((p) => p.name === newPlayer.name);
@@ -142,20 +102,11 @@ function App() {
     if (duplicate) {
       const sellValue = SELL_VALUES[newPlayer.rarity];
       setCoins((c) => c + sellValue);
-      return {
-        type: "duplicate",
-        player: newPlayer,
-        coins: sellValue,
-        pityTriggered: pityTriggered ?? undefined,
-      };
+      return { type: "duplicate", player: newPlayer, coins: sellValue, pityTriggered: pityTriggered ?? undefined };
     }
 
     setPlayers((p) => [...p, newPlayer]);
-    return {
-      type: "new",
-      player: newPlayer,
-      pityTriggered: pityTriggered ?? undefined,
-    };
+    return { type: "new", player: newPlayer, pityTriggered: pityTriggered ?? undefined };
   }
 
   function handleSellPlayer(playerId: string): number {
@@ -174,23 +125,15 @@ function App() {
     return sellValue;
   }
 
-  // ── Daily tracking ─────────────────────────────────────
   function trackCorrectAnswer() {
     trackProgress("correct-answers", 1);
-    setStats((prev) => ({
-      ...prev,
-      correctAnswers: prev.correctAnswers + 1,
-    }));
+    setStats((prev) => ({ ...prev, correctAnswers: prev.correctAnswers + 1 }));
   }
 
   function trackQuizComplete(score: number) {
     trackProgress("play-quiz", 1);
     if (score >= 8) trackProgress("high-score", 1);
-    setStats((prev) => ({
-      ...prev,
-      quizzesCompleted: prev.quizzesCompleted + 1,
-      bestQuizScore: Math.max(prev.bestQuizScore, score),
-    }));
+    setStats((prev) => ({ ...prev, quizzesCompleted: prev.quizzesCompleted + 1, bestQuizScore: Math.max(prev.bestQuizScore, score) }));
   }
 
   function trackPackOpened() {
@@ -200,14 +143,9 @@ function App() {
 
   function claimMission(id: MissionId) {
     const mission = getMission(id);
-    if (!mission) return;
-    if (daily.claimed[id]) return;
-    if (daily.progress[id] < mission.goal) return;
+    if (!mission || daily.claimed[id] || daily.progress[id] < mission.goal) return;
     setCoins((c) => c + mission.reward);
-    updateDaily((prev) => ({
-      ...prev,
-      claimed: { ...prev.claimed, [id]: true },
-    }));
+    updateDaily((prev) => ({ ...prev, claimed: { ...prev.claimed, [id]: true } }));
   }
 
   function claimLogin() {
@@ -217,11 +155,8 @@ function App() {
     updateDaily((prev) => ({ ...prev, loginClaimed: true }));
   }
 
-  // ── Achievements ──────────────────────────────────────
   function claimAchievement(id: AchievementId) {
-    const found = achievementList.find(
-      (x) => x.achievement.id === id && x.canClaim
-    );
+    const found = achievementList.find((x) => x.achievement.id === id && x.canClaim);
     if (!found) return;
     setCoins((c) => c + found.achievement.reward);
     setClaimedAchievements((prev) => ({ ...prev, [id]: true }));
@@ -230,16 +165,11 @@ function App() {
   function claimAllAchievements(): number {
     const claimable = achievementList.filter((x) => x.canClaim);
     if (claimable.length === 0) return 0;
-    const total = claimable.reduce(
-      (sum, x) => sum + x.achievement.reward,
-      0
-    );
+    const total = claimable.reduce((sum, x) => sum + x.achievement.reward, 0);
     setCoins((c) => c + total);
     setClaimedAchievements((prev) => {
       const next = { ...prev };
-      claimable.forEach((x) => {
-        next[x.achievement.id] = true;
-      });
+      claimable.forEach((x) => { next[x.achievement.id] = true; });
       return next;
     });
     return total;
@@ -258,15 +188,12 @@ function App() {
     try {
       localStorage.removeItem("qtg:quizSession");
       localStorage.removeItem("qtg:daily");
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
   return (
     <div className="app">
       <Header coins={coins} onGoHome={goHome} />
-
       <main>
         {page === "home" && (
           <HomePage
@@ -274,71 +201,19 @@ function App() {
             players={players}
             squad={squad}
             daily={daily}
-            achievementSummary={{
-              claimable: claimableCount,
-              unlocked: unlockedCount,
-              total: ACHIEVEMENTS.length,
-            }}
+            achievementSummary={{ claimable: claimableCount, unlocked: unlockedCount, total: ACHIEVEMENTS.length }}
             onStartQuiz={() => setPage("quiz")}
             onNavigate={setPage}
           />
         )}
 
-        {page === "quiz" && (
-          <QuizPage
-            onBack={goHome}
-            onAwardCoins={(amount) => setCoins((c) => c + amount)}
-            onCorrectAnswer={trackCorrectAnswer}
-            onQuizComplete={trackQuizComplete}
-          />
-        )}
-
-        {page === "team" && (
-          <TeamPage
-            players={players}
-            squad={squad}
-            onSquadChange={setSquad}
-            onSellPlayer={handleSellPlayer}
-            onBack={goHome}
-          />
-        )}
-
-        {page === "packs" && (
-          <PacksPage
-            coins={coins}
-            packsOpened={packsOpened}
-            pity={pity}
-            onBack={goHome}
-            onOpenPack={handleOpenPack}
-            onPackOpened={trackPackOpened}
-          />
-        )}
-
-        {page === "daily" && (
-          <DailyMissionsPage
-            daily={daily}
-            onClaimMission={claimMission}
-            onClaimLogin={claimLogin}
-            onBack={goHome}
-          />
-        )}
-
-        {page === "achievements" && (
-          <AchievementsPage
-            achievements={achievementList}
-            claimableCount={claimableCount}
-            unlockedCount={unlockedCount}
-            onClaimAchievement={claimAchievement}
-            onClaimAll={claimAllAchievements}
-            onBack={goHome}
-          />
-        )}
-
-        {page === "settings" && (
-          <SettingsPage onBack={goHome} onReset={resetProgress} />
-        )}
+        {page === "quiz" && <QuizPage onBack={goHome} onAwardCoins={(amount) => setCoins((c) => c + amount)} onCorrectAnswer={trackCorrectAnswer} onQuizComplete={trackQuizComplete} />}
+        {page === "team" && <TeamPage players={players} squad={squad} onSquadChange={setSquad} onSellPlayer={handleSellPlayer} onBack={goHome} />}
+        {page === "packs" && <PacksPage coins={coins} packsOpened={packsOpened} pity={pity} onBack={goHome} onOpenPack={handleOpenPack} onPackOpened={trackPackOpened} />}
+        {page === "daily" && <DailyMissionsPage daily={daily} onClaimMission={claimMission} onClaimLogin={claimLogin} onBack={goHome} />}
+        {page === "achievements" && <AchievementsPage achievements={achievementList} claimableCount={claimableCount} unlockedCount={unlockedCount} onClaimAchievement={claimAchievement} onClaimAll={claimAllAchievements} onBack={goHome} />}
+        {page === "settings" && <SettingsPage onBack={goHome} onReset={resetProgress} />}
       </main>
-
       <Footer />
     </div>
   );
