@@ -35,9 +35,16 @@ function createNewSession(): QuizSession {
 type QuizPageProps = {
   onBack: () => void;
   onAwardCoins: (amount: number) => void;
+  onCorrectAnswer: () => void;
+  onQuizComplete: (score: number) => void;
 };
 
-export default function QuizPage({ onBack, onAwardCoins }: QuizPageProps) {
+export default function QuizPage({
+  onBack,
+  onAwardCoins,
+  onCorrectAnswer,
+  onQuizComplete,
+}: QuizPageProps) {
   const [savedSession, setSavedSession] = useLocalStorage<QuizSession | null>(
     "qtg:quizSession",
     null
@@ -51,7 +58,7 @@ export default function QuizPage({ onBack, onAwardCoins }: QuizPageProps) {
       savedSession &&
       !savedSession.completed &&
       savedSession.round.length > 0 &&
-      savedSession.round[0]?.id; // guards against old-format sessions
+      savedSession.round[0]?.id;
 
     if (isValidResume) {
       setShowResumePrompt(true);
@@ -86,6 +93,7 @@ export default function QuizPage({ onBack, onAwardCoins }: QuizPageProps) {
 
     if (session.selectedAnswer === currentQuestion.answer) {
       onAwardCoins(50);
+      onCorrectAnswer();
       setSession({
         ...session,
         score: session.score + 1,
@@ -115,6 +123,7 @@ export default function QuizPage({ onBack, onAwardCoins }: QuizPageProps) {
         feedback: `Quiz completed! Your score: ${session.score}/${session.round.length}`,
         completed: true,
       });
+      onQuizComplete(session.score);
     }
   }
 

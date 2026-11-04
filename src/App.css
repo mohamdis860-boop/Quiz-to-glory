@@ -1521,3 +1521,296 @@ button {
     grid-template-columns: 1fr;
   }
 }
+/* ── Daily banner on Home ───────────────────────────── */
+.daily-banner {
+  width: 91%;
+  max-width: 1100px;
+  margin: -10px auto 24px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(120deg, #3a1f6a, #1a0f30);
+  border: 1px solid #ffd700;
+  border-radius: 14px;
+  color: white;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  text-align: left;
+}
+
+.daily-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(255, 215, 0, 0.2);
+}
+
+.daily-banner-flame {
+  font-size: 32px;
+  filter: drop-shadow(0 0 10px rgba(255, 100, 40, 0.6));
+}
+
+.daily-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.daily-banner-text strong {
+  font-size: 14px;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+}
+
+.daily-banner-text span {
+  font-size: 12px;
+  color: #d5c8f0;
+}
+
+.daily-banner-arrow {
+  font-size: 20px;
+  color: #ffd700;
+}
+
+/* ── Streak card ───────────────────────────────────── */
+.streak-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  background: linear-gradient(120deg, #4b1c0f, #2a0f08);
+  border: 1px solid #ff7a3c;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(255, 122, 60, 0.15);
+}
+
+.streak-flame {
+  font-size: 44px;
+  filter: drop-shadow(0 0 14px rgba(255, 100, 40, 0.7));
+  animation: streakPulse 2s ease-in-out infinite;
+}
+
+@keyframes streakPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.streak-info {
+  flex: 1;
+}
+
+.streak-label {
+  color: #ffb28a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.streak-day {
+  font-size: 22px;
+  color: #ffd700;
+}
+
+.streak-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.streak-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.streak-claimed {
+  padding: 6px 12px;
+  background: rgba(104, 220, 169, 0.15);
+  border: 1px solid rgba(104, 220, 169, 0.4);
+  border-radius: 14px;
+  color: #8ff0c0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.streak-claim {
+  padding: 9px 18px;
+  font-size: 13px;
+}
+
+.streak-note {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* ── Missions summary ──────────────────────────────── */
+.missions-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  background: rgba(5, 24, 50, 0.5);
+  border: 1px solid #24466b;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #b8d9ff;
+  font-weight: 600;
+}
+
+.missions-summary-badge {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: rgba(255, 211, 93, 0.15);
+  border: 1px solid rgba(255, 211, 93, 0.5);
+  border-radius: 12px;
+  color: #ffd35d;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ── Mission rows ──────────────────────────────────── */
+.missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mission-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: linear-gradient(145deg, #122d50, #0a1b35);
+  border: 1px solid #315b89;
+  border-radius: 14px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.mission-row.mission-claimable {
+  border-color: #68dca9;
+  box-shadow: 0 0 14px rgba(104, 220, 169, 0.2);
+}
+
+.mission-row.mission-claimed {
+  opacity: 0.65;
+}
+
+.mission-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.mission-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.mission-head strong {
+  font-size: 15px;
+}
+
+.mission-reward {
+  color: #ffd35d;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mission-desc {
+  color: #a8c8eb;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.mission-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mission-bar {
+  flex: 1;
+  height: 6px;
+  background: #0a1b35;
+  border: 1px solid #24466b;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mission-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #5544ff, #168eff);
+  border-radius: 10px;
+  transition: width 0.35s ease;
+}
+
+.mission-claimable .mission-fill {
+  background: linear-gradient(90deg, #14b85a, #68dca9);
+}
+
+.mission-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b8d9ff;
+  min-width: 36px;
+  text-align: right;
+}
+
+.mission-action {
+  flex-shrink: 0;
+}
+
+.mission-claim {
+  padding: 9px 18px;
+  font-size: 12px;
+}
+
+.mission-claimed-label {
+  color: #8ff0c0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mission-locked {
+  color: #6d8aab;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .streak-card {
+    flex-wrap: wrap;
+  }
+  .streak-reward {
+    width: 100%;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .mission-row {
+    flex-wrap: wrap;
+  }
+  .mission-icon {
+    font-size: 26px;
+  }
+  .mission-action {
+    width: 100%;
+    text-align: right;
+  }
+}

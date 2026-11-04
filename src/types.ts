@@ -1,4 +1,4 @@
-export type Page = "home" | "quiz" | "team" | "packs" | "settings";
+export type Page = "home" | "quiz" | "team" | "packs" | "daily" | "settings";
 
 export type Rarity = "bronze" | "silver" | "gold" | "icon";
 
@@ -55,4 +55,19 @@ export type Question = {
   question: string;
   options: string[];
   answer: string;
+};
+export type MissionId =
+  | "play-quiz"
+  | "correct-answers"
+  | "open-pack"
+  | "open-packs-3"
+  | "high-score";
+
+export type DailyState = {
+  dateKey: string;
+  progress: Record<MissionId, number>;
+  claimed: Record<MissionId, boolean>;
+  streak: number;
+  lastVisitDate: string;
+  loginClaimed: boolean;
 };

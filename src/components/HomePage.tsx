@@ -1,10 +1,12 @@
-import type { Page, Player, Squad } from "../types";
+import type { DailyState, Page, Player, Squad } from "../types";
+import { MISSIONS } from "../data/missions";
 import { calculateSquadRating } from "../utils/squad";
 
 type HomePageProps = {
   coins: number;
   players: Player[];
   squad: Squad;
+  daily: DailyState;
   onStartQuiz: () => void;
   onNavigate: (page: Page) => void;
 };
@@ -13,10 +15,19 @@ export default function HomePage({
   coins,
   players,
   squad,
+  daily,
   onStartQuiz,
   onNavigate,
 }: HomePageProps) {
   const teamRating = calculateSquadRating(squad, players);
+
+  const claimableMissions = MISSIONS.filter(
+    (m) => daily.progress[m.id] >= m.goal && !daily.claimed[m.id]
+  ).length;
+  const claimable = claimableMissions + (daily.loginClaimed ? 0 : 1);
+  const completedMissions = MISSIONS.filter(
+    (m) => daily.progress[m.id] >= m.goal
+  ).length;
 
   return (
     <>
@@ -36,7 +47,6 @@ export default function HomePage({
             Start Your Journey <span>→</span>
           </button>
         </div>
-
         <div className="hero-ball" aria-hidden="true">
           ⚽
           <span>👑</span>
@@ -66,6 +76,19 @@ export default function HomePage({
           </div>
         </div>
       </section>
+
+      <button className="daily-banner" onClick={() => onNavigate("daily")}>
+        <span className="daily-banner-flame">🔥</span>
+        <span className="daily-banner-text">
+          <strong>Day {daily.streak} Streak</strong>
+          <span>
+            {claimable > 0
+              ? `🎁 ${claimable} reward${claimable > 1 ? "s" : ""} ready to claim`
+              : `Daily Missions · ${completedMissions}/${MISSIONS.length} done`}
+          </span>
+        </span>
+        <span className="daily-banner-arrow">→</span>
+      </button>
 
       <section className="section-heading">
         <div>

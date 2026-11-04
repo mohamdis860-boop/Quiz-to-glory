@@ -13,6 +13,7 @@ type PacksPageProps = {
   pity: PityState;
   onBack: () => void;
   onOpenPack: () => PackResult;
+  onPackOpened: () => void;
 };
 
 type LastPull = {
@@ -28,6 +29,7 @@ export default function PacksPage({
   pity,
   onBack,
   onOpenPack,
+  onPackOpened,
 }: PacksPageProps) {
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
@@ -48,6 +50,8 @@ export default function PacksPage({
       return;
     }
 
+    onPackOpened();
+
     const pityTriggered = result.pityTriggered ?? null;
 
     if (result.type === "duplicate") {
@@ -65,7 +69,9 @@ export default function PacksPage({
 
     const rarityLabel = RARITY_CONFIG[result.player.rarity].label;
     const pityText = pityTriggered
-      ? ` 🛡️ Pity triggered! Guaranteed ${pityTriggered === "icon" ? "Icon" : "Gold"}.`
+      ? ` 🛡️ Pity triggered! Guaranteed ${
+          pityTriggered === "icon" ? "Icon" : "Gold"
+        }.`
       : "";
     setFeedback(
       `You pulled a ${rarityLabel} ${result.player.position} — ${result.player.name} (${result.player.rating} OVR)!${pityText}`
