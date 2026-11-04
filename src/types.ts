@@ -1,5 +1,14 @@
-export type Page = "home" | "quiz" | "team" | "packs" | "daily" | "settings";
+// ── Pages ─────────────────────────────────────────────
+export type Page =
+  | "home"
+  | "quiz"
+  | "team"
+  | "packs"
+  | "daily"
+  | "achievements"
+  | "settings";
 
+// ── Players & Rarity ──────────────────────────────────
 export type Rarity = "bronze" | "silver" | "gold" | "icon";
 
 export type Player = {
@@ -10,25 +19,28 @@ export type Player = {
   rarity: Rarity;
 };
 
+// ── Squad / Formation ─────────────────────────────────
 export type Formation = "4-3-3" | "4-4-2" | "4-2-3-1";
 
 export type Slot = {
   id: string;
   position: string;
-  x: number;
-  y: number;
+  x: number; // 0–100
+  y: number; // 0–100
 };
 
 export type Squad = {
   formation: Formation;
-  assignments: Record<string, string | null>;
+  assignments: Record<string, string | null>; // slotId → playerId
 };
 
+// ── Pity System ───────────────────────────────────────
 export type PityState = {
   packsSinceGold: number;
   packsSinceIcon: number;
 };
 
+// ── Pack results ──────────────────────────────────────
 export type PackResult =
   | { type: "new"; player: Player; pityTriggered?: "gold" | "icon" }
   | {
@@ -39,6 +51,7 @@ export type PackResult =
     }
   | { type: "error"; message: string };
 
+// ── Quiz / Questions ──────────────────────────────────
 export type Category =
   | "world-cup"
   | "clubs"
@@ -56,6 +69,8 @@ export type Question = {
   options: string[];
   answer: string;
 };
+
+// ── Daily Missions ────────────────────────────────────
 export type MissionId =
   | "play-quiz"
   | "correct-answers"
@@ -71,3 +86,34 @@ export type DailyState = {
   lastVisitDate: string;
   loginClaimed: boolean;
 };
+
+// ── Stats (for Achievements) ──────────────────────────
+export type Stats = {
+  quizzesCompleted: number;
+  correctAnswers: number;
+  bestQuizScore: number;
+  highestStreak: number;
+};
+
+export const INITIAL_STATS: Stats = {
+  quizzesCompleted: 0,
+  correctAnswers: 0,
+  bestQuizScore: 0,
+  highestStreak: 0,
+};
+
+// ── Achievements ──────────────────────────────────────
+export type AchievementId =
+  | "first-quiz"
+  | "first-pack"
+  | "perfect-quiz"
+  | "sniper"
+  | "sharpshooter"
+  | "pack-rat"
+  | "collector"
+  | "golden-touch"
+  | "legendary"
+  | "team-builder"
+  | "squad-complete"
+  | "veteran"
+  | "streak-master";

@@ -7,6 +7,11 @@ type HomePageProps = {
   players: Player[];
   squad: Squad;
   daily: DailyState;
+  achievementSummary: {
+    claimable: number;
+    unlocked: number;
+    total: number;
+  };
   onStartQuiz: () => void;
   onNavigate: (page: Page) => void;
 };
@@ -16,6 +21,7 @@ export default function HomePage({
   players,
   squad,
   daily,
+  achievementSummary,
   onStartQuiz,
   onNavigate,
 }: HomePageProps) {
@@ -24,7 +30,7 @@ export default function HomePage({
   const claimableMissions = MISSIONS.filter(
     (m) => daily.progress[m.id] >= m.goal && !daily.claimed[m.id]
   ).length;
-  const claimable = claimableMissions + (daily.loginClaimed ? 0 : 1);
+  const claimableDaily = claimableMissions + (daily.loginClaimed ? 0 : 1);
   const completedMissions = MISSIONS.filter(
     (m) => daily.progress[m.id] >= m.goal
   ).length;
@@ -82,9 +88,30 @@ export default function HomePage({
         <span className="daily-banner-text">
           <strong>Day {daily.streak} Streak</strong>
           <span>
-            {claimable > 0
-              ? `🎁 ${claimable} reward${claimable > 1 ? "s" : ""} ready to claim`
+            {claimableDaily > 0
+              ? `🎁 ${claimableDaily} reward${claimableDaily > 1 ? "s" : ""} ready to claim`
               : `Daily Missions · ${completedMissions}/${MISSIONS.length} done`}
+          </span>
+        </span>
+        <span className="daily-banner-arrow">→</span>
+      </button>
+
+      <button
+        className="achievements-banner"
+        onClick={() => onNavigate("achievements")}
+      >
+        <span className="achievements-banner-icon">🏆</span>
+        <span className="daily-banner-text">
+          <strong>
+            Achievements · {achievementSummary.unlocked}/
+            {achievementSummary.total}
+          </strong>
+          <span>
+            {achievementSummary.claimable > 0
+              ? `🎁 ${achievementSummary.claimable} reward${
+                  achievementSummary.claimable > 1 ? "s" : ""
+                } ready to claim`
+              : "Keep playing to unlock more milestones"}
           </span>
         </span>
         <span className="daily-banner-arrow">→</span>

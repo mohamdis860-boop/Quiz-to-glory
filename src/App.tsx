@@ -1,9 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import type { MissionId, Page, PackResult, PityState, Player, Squad } from "./types";
+import type {
+  AchievementId,
+  MissionId,
+  Page,
+  PackResult,
+  PityState,
+  Player,
+  Squad,
+  Stats,
+} from "./types";
+import { INITIAL_STATS } from "./types";
 import { initialPlayers } from "./data/players";
-import { createRandomPlayer, INITIAL_PITY, rollWithPity, SELL_VALUES } from "./data/rarity";
+import {
+  createRandomPlayer,
+  INITIAL_PITY,
+  rollWithPity,
+  SELL_VALUES,
+} from "./data/rarity";
 import { getMission, getLoginReward } from "./data/missions";
+import {
+  ACHIEVEMENTS,
+  type AchievementContext,
+} from "./data/achievements";
 import { createAutoSquad, createEmptySquad } from "./utils/squad";
 import { generateId } from "./utils/id";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -15,25 +34,48 @@ import QuizPage from "./components/QuizPage";
 import TeamPage from "./components/TeamPage";
 import PacksPage from "./components/PacksPage";
 import DailyMissionsPage from "./components/DailyMissionsPage";
+import AchievementsPage from "./components/AchievementsPage";
 import SettingsPage from "./components/SettingsPage";
 
 function App() {
   const [page, setPage] = useState<Page>("home");
 
   const [coins, setCoins] = useLocalStorage<number>("qtg:coins", 200);
-  const [players, setPlayers] = useLocalStorage<Player[]>("qtg:players", initialPlayers);
-  const [packsOpened, setPacksOpened] = useLocalStorage<number>("qtg:packsOpened", 0);
-  const [squad, setSquad] = useLocalStorage<Squad>("qtg:squad", createEmptySquad("4-3-3"));
-  const [squadInitialized, setSquadInitialized] = useLocalStorage<boolean>("qtg:squadInit", false);
-  const [pity, setPity] = useLocalStorage<PityState>("qtg:pity", INITIAL_PITY);
+  const [players, setPlayers] = useLocalStorage<Player[]>(
+    "qtg:players",
+    initialPlayers
+  );
+  const [packsOpened, setPacksOpened] = useLocalStorage<number>(
+    "qtg:packsOpened",
+    0
+  );
+  const [squad, setSquad] = useLocalStorage<Squad>(
+    "qtg:squad",
+    createEmptySquad("4-3-3")
+  );
+  const [squadInitialized, setSquadInitialized] = useLocalStorage<boolean>(
+    "qtg:squadInit",
+    false
+  );
+  const [pity, setPity] = useLocalStorage<PityState>(
+    "qtg:pity",
+    INITIAL_PITY
+  );
+  const [stats, setStats] = useLocalStorage<Stats>("qtg:stats", INITIAL_STATS);
+  const [claimedAchievements, setClaimedAchievements] = useLocalStorage<
+    Record<string, boolean>
+  >("qtg:achievementsClaimed", {});
 
   const { daily, update: updateDaily, trackProgress } = useDailyState();
 
+  // Migrate + autofill on first mount
   useEffect(() => {
     if (squadInitialized) return;
     let workingPlayers = players;
     if (players.some((p) => !p.id)) {
-      workingPlayers = players.map((p) => (p.id ? p : { ...p, id: generateId() }));
+      workingPlayers = players.map((p) =>
+        p.id ? p : { ...p, id: generateId() }
+      );
       setPlayers(workingPlayers);
     }
     if (workingPlayers.length > 0) {
@@ -43,13 +85,50 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Track highest login streak
+  useEffect(() => {
+    if (daily.streak > stats.highestStreak) {
+      setStats((prev) => ({ ...prev, highestStreak: daily.streak }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daily.streak]);
+
+  // ── Build achievement context ─────────────────────────
+  const achievementCtx: AchievementContext = useMemo(
+    () => ({ stats, players, daily, packsOpened, squad }),
+    [stats, players, daily, packsOpened, squad]
+  );
+
+  const achievementList = useMemo(
+    () =>
+      ACHIEVEMENTS.map((a) => {
+        const progress = Math.min(a.getProgress(achievementCtx), a.goal);
+        const isComplete = progress >= a.goal;
+        const isClaimed = !!claimedAchievements[a.id];
+        return {
+          achievement: a,
+          progress,
+          isComplete,
+          isClaimed,
+          canClaim: isComplete && !isClaimed,
+        };
+      }),
+    [achievementCtx, claimedAchievements]
+  );
+
+  const claimableCount = achievementList.filter((x) => x.canClaim).length;
+  const unlockedCount = achievementList.filter((x) => x.isComplete).length;
+
   function goHome() {
     setPage("home");
   }
 
   function handleOpenPack(): PackResult {
     if (coins < 100) {
-      return { type: "error", message: "Not enough coins! Play the quiz to earn more." };
+      return {
+        type: "error",
+        message: "Not enough coins! Play the quiz to earn more.",
+      };
     }
 
     const { rarity, newPity, pityTriggered } = rollWithPity(pity);
@@ -95,14 +174,23 @@ function App() {
     return sellValue;
   }
 
-  // ── Daily tracking ────────────────────────────────────
+  // ── Daily tracking ─────────────────────────────────────
   function trackCorrectAnswer() {
     trackProgress("correct-answers", 1);
+    setStats((prev) => ({
+      ...prev,
+      correctAnswers: prev.correctAnswers + 1,
+    }));
   }
 
   function trackQuizComplete(score: number) {
     trackProgress("play-quiz", 1);
     if (score >= 8) trackProgress("high-score", 1);
+    setStats((prev) => ({
+      ...prev,
+      quizzesCompleted: prev.quizzesCompleted + 1,
+      bestQuizScore: Math.max(prev.bestQuizScore, score),
+    }));
   }
 
   function trackPackOpened() {
@@ -115,7 +203,6 @@ function App() {
     if (!mission) return;
     if (daily.claimed[id]) return;
     if (daily.progress[id] < mission.goal) return;
-
     setCoins((c) => c + mission.reward);
     updateDaily((prev) => ({
       ...prev,
@@ -130,6 +217,34 @@ function App() {
     updateDaily((prev) => ({ ...prev, loginClaimed: true }));
   }
 
+  // ── Achievements ──────────────────────────────────────
+  function claimAchievement(id: AchievementId) {
+    const found = achievementList.find(
+      (x) => x.achievement.id === id && x.canClaim
+    );
+    if (!found) return;
+    setCoins((c) => c + found.achievement.reward);
+    setClaimedAchievements((prev) => ({ ...prev, [id]: true }));
+  }
+
+  function claimAllAchievements(): number {
+    const claimable = achievementList.filter((x) => x.canClaim);
+    if (claimable.length === 0) return 0;
+    const total = claimable.reduce(
+      (sum, x) => sum + x.achievement.reward,
+      0
+    );
+    setCoins((c) => c + total);
+    setClaimedAchievements((prev) => {
+      const next = { ...prev };
+      claimable.forEach((x) => {
+        next[x.achievement.id] = true;
+      });
+      return next;
+    });
+    return total;
+  }
+
   function resetProgress() {
     setCoins(200);
     setPlayers(initialPlayers);
@@ -137,6 +252,8 @@ function App() {
     setSquad(createAutoSquad("4-3-3", initialPlayers));
     setSquadInitialized(true);
     setPity(INITIAL_PITY);
+    setStats(INITIAL_STATS);
+    setClaimedAchievements({});
     setPage("home");
     try {
       localStorage.removeItem("qtg:quizSession");
@@ -157,6 +274,11 @@ function App() {
             players={players}
             squad={squad}
             daily={daily}
+            achievementSummary={{
+              claimable: claimableCount,
+              unlocked: unlockedCount,
+              total: ACHIEVEMENTS.length,
+            }}
             onStartQuiz={() => setPage("quiz")}
             onNavigate={setPage}
           />
@@ -197,6 +319,17 @@ function App() {
             daily={daily}
             onClaimMission={claimMission}
             onClaimLogin={claimLogin}
+            onBack={goHome}
+          />
+        )}
+
+        {page === "achievements" && (
+          <AchievementsPage
+            achievements={achievementList}
+            claimableCount={claimableCount}
+            unlockedCount={unlockedCount}
+            onClaimAchievement={claimAchievement}
+            onClaimAll={claimAllAchievements}
             onBack={goHome}
           />
         )}
