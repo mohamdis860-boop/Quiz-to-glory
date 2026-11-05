@@ -1,0 +1,40 @@
+.app { min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, #123b70 0%, transparent 48%), linear-gradient(145deg, #06152c, #031027); overflow: hidden; }
+.topbar { min-height: 82px; padding: 14px 5%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #24446b; background: rgba(4, 19, 42, 0.92); }
+.brand { display: flex; align-items: center; gap: 12px; background: transparent; color: white; font-size: 27px; font-weight: 900; font-style: italic; }
+.brand-ball { font-size: 35px; }
+.brand-accent { color: #26a9ff; }
+.header-actions { display: flex; align-items: center; gap: 28px; }
+.coin-balance, .profile { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.coin-balance { padding: 10px 17px; background: #102c50; border: 1px solid #315c8c; border-radius: 30px; }
+.coin-balance span { font-size: 22px; }
+.avatar { width: 38px; height: 38px; display: grid; place-items: center; background: #3169b1; border-radius: 50%; font-size: 21px; }
+.footer { min-height: 90px; display: flex; align-items: center; justify-content: center; gap: 17px; color: #72a9df; font-size: 12px; }
+.hero { min-height: 340px; padding: 65px 11%; position: relative; display: flex; align-items: center; justify-content: space-between; overflow: hidden; background: linear-gradient(90deg, rgba(4, 20, 44, 0.96), rgba(4, 20, 44, 0.45)), radial-gradient(ellipse at 75% 100%, #0874a8, transparent 60%); }
+.hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, transparent, #168cff, #00d6b0, transparent); }
+.hero-content { position: relative; z-index: 2; max-width: 600px; }
+.eyebrow { color: #51b9ff; font-size: 11px; font-weight: 800; letter-spacing: 2px; margin-bottom: 14px; }
+.hero h1 { font-size: clamp(36px, 5vw, 62px); line-height: 1.12; font-weight: 900; }
+.hero h1 span { color: #37b6ff; }
+.hero-description { color: #c5d7ec; line-height: 1.8; max-width: 470px; margin: 20px 0 25px; }
+.hero-ball { position: relative; font-size: clamp(100px, 17vw, 190px); filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.4)); }
+.hero-ball span { position: absolute; top: -15px; right: -5px; font-size: 55px; }
+.stats { position: relative; z-index: 3; width: 84%; margin: -1px auto 40px; padding: 22px; display: grid; grid-template-columns: repeat(3, 1fr); background: rgba(5, 24, 50, 0.95); border: 1px solid #1c67a8; border-radius: 20px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2); }
+.stat { display: flex; justify-content: center; align-items: center; gap: 15px; }
+.stat + .stat { border-left: 1px solid #29496d; }
+.stat-icon { font-size: 30px; }
+.stat p { color: #8eb4dc; font-size: 13px; margin-bottom: 5px; }
+.stat strong { font-size: 21px; }
+.section-heading { width: 84%; margin: 0 auto 20px; }
+.section-heading h2, .subpage h1 { font-size: 29px; font-weight: 800; }
+.feature-grid { width: 91%; margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.feature-card { min-height: 245px; padding: 25px; display: flex; align-items: center; gap: 20px; border-radius: 22px; border: 1px solid; transition: transform 0.25s, box-shadow 0.25s; }
+.feature-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); }
+.quiz-card { background: linear-gradient(120deg, #1e3288, #111d50); border-color: #536eff; }
+.team-card { background: linear-gradient(120deg, #00734f, #063c36); border-color: #00c88a; }
+.packs-card { background: linear-gradient(120deg, #754313, #39230f); border-color: #f3a51b; }
+.settings-card { background: linear-gradient(120deg, #173e72, #0a2348); border-color: #2876bd; }
+.feature-art { flex: 0 0 36%; text-align: center; font-size: clamp(55px, 8vw, 90px); filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.3)); }
+.feature-info { flex: 1; min-width: 0; }
+.card-tag { color: #b5d6ff; font-size: 9px; font-weight: 800; letter-spacing: 1px; }
+.feature-info h3 { font-size: 23px; margin: 9px 0; }
+.feature-info p { color: #d1e1f3; font-size: 13px; line-height: 1.7; margin-bottom: 18px; }
