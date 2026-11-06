@@ -54,7 +54,9 @@ export type PityState = {
   packsSinceIcon: number;
 };
 
-// ── Pack results ──────────────────────────────────────
+// ── Packs ─────────────────────────────────────────────
+export type PackType = "bronze" | "silver" | "gold" | "icon";
+
 export type PackResult =
   | { type: "new"; player: Player; pityTriggered?: "gold" | "icon" }
   | {
