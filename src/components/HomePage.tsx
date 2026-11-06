@@ -161,6 +161,19 @@ export default function HomePage({
           </div>
         </article>
 
+        {/* كارت الماتش الجديد */}
+        <article className="feature-card" style={{ background: "linear-gradient(120deg, #5c0a0a, #2a0505)", borderColor: "#ff3d3d" }}>
+          <div className="feature-art">⚽</div>
+          <div className="feature-info">
+            <span className="card-tag">TEST YOUR SQUAD</span>
+            <h3>Play Match</h3>
+            <p>Simulate a match against a random team and earn coins.</p>
+            <button className="card-button" onClick={() => onNavigate("match")}>
+              Start Match <span>→</span>
+            </button>
+          </div>
+        </article>
+
         <article className="feature-card settings-card">
           <div className="feature-art">⚙️</div>
           <div className="feature-info">

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+
+// استدعاء ملفات التصميم اللي قسمناها
 import "./styles/base.css";
 import "./styles/layout.css";
 import "./styles/components.css";
@@ -28,8 +30,6 @@ import { createAutoSquad, createEmptySquad } from "./utils/squad";
 import { generateId } from "./utils/id";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useDailyState } from "./hooks/useDailyState";
-
-// استيراد دالة جلب اللاعبين من السوبابيز
 import { fetchAllPlayers } from "./data/api";
 
 import Header from "./components/Header";
@@ -40,12 +40,12 @@ import TeamPage from "./components/TeamPage";
 import PacksPage from "./components/PacksPage";
 import DailyMissionsPage from "./components/DailyMissionsPage";
 import AchievementsPage from "./components/AchievementsPage";
+import MatchPage from "./components/MatchPage";
 import SettingsPage from "./components/SettingsPage";
 
 function App() {
   const [page, setPage] = useState<Page>("home");
 
-  // ستيت لحفظ اللاعبين اللي جايين من الداتابيز
   const [dbPlayers, setDbPlayers] = useState<Player[]>([]);
   const [isLoadingDb, setIsLoadingDb] = useState(true);
 
@@ -60,7 +60,6 @@ function App() {
 
   const { daily, update: updateDaily, trackProgress } = useDailyState();
 
-  // 1. جلب اللاعبين من السوبابيز أول ما اللعبة تفتح
   useEffect(() => {
     async function loadData() {
       try {
@@ -75,7 +74,6 @@ function App() {
     loadData();
   }, []);
 
-  // 2. تجهيز التشكيل الأساسي
   useEffect(() => {
     if (squadInitialized) return;
     let workingPlayers = players;
@@ -116,7 +114,6 @@ function App() {
 
   function goHome() { setPage("home"); }
 
-  // 3. تعديل فتح الباك عشان يسحب من الداتابيز ويحمي من الإيرور
   function handleOpenPack(): PackResult {
     if (coins < 100) {
       return { type: "error", message: "Not enough coins! Play the quiz to earn more." };
@@ -128,25 +125,15 @@ function App() {
       return { type: "error", message: "No players in database!" };
     }
 
-    // تحديد الـ Rarity بناءً على الـ Pity
     const { rarity, newPity, pityTriggered } = rollWithPity(pity);
     
-    // فلترة اللاعبين اللي في الداتابيز عشان نجيب اللي ليهم نفس الـ Rarity
     let pool = dbPlayers.filter((p) => p.rarity === rarity);
-    
-    // لو مفيش لاعبين من التصنيف ده (زي ما حصل مع البرونز)، هنسحب من كل اللاعبين المتاحين
-    if (pool.length === 0) {
-      pool = dbPlayers; 
-    }
+    if (pool.length === 0) pool = dbPlayers; 
 
-    // اختيار لاعب عشوائي من الفلتر ده
     const randomIndex = Math.floor(Math.random() * pool.length);
     const dbPlayer = pool[randomIndex];
 
-    // بناخد نسخة من اللاعب ونعمله ID جديد عشان يتحفظ في مجموعتك
     const newPlayer: Player = { ...dbPlayer, id: generateId() };
-    
-    // التأكد إن اللاعب مش موجود عندك (بالاسم)
     const duplicate = players.find((p) => p.name === newPlayer.name);
 
     setCoins((c) => c - 100);
@@ -262,15 +249,11 @@ function App() {
         )}
 
         {page === "quiz" && <QuizPage onBack={goHome} onAwardCoins={(amount) => setCoins((c) => c + amount)} onCorrectAnswer={trackCorrectAnswer} onQuizComplete={trackQuizComplete} />}
-        
         {page === "team" && <TeamPage players={players} squad={squad} onSquadChange={setSquad} onSellPlayer={handleSellPlayer} onBack={goHome} />}
-        
         {page === "packs" && <PacksPage coins={coins} packsOpened={packsOpened} pity={pity} onBack={goHome} onOpenPack={handleOpenPack} onPackOpened={trackPackOpened} />}
-        
+        {page === "match" && <MatchPage players={players} squad={squad} onAwardCoins={(amount) => setCoins((c) => c + amount)} onBack={goHome} />}
         {page === "daily" && <DailyMissionsPage daily={daily} onClaimMission={claimMission} onClaimLogin={claimLogin} onBack={goHome} />}
-        
         {page === "achievements" && <AchievementsPage achievements={achievementList} claimableCount={claimableCount} unlockedCount={unlockedCount} onClaimAchievement={claimAchievement} onClaimAll={claimAllAchievements} onBack={goHome} />}
-        
         {page === "settings" && <SettingsPage onBack={goHome} onReset={resetProgress} />}
       </main>
       <Footer />

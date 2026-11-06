@@ -113,3 +113,120 @@
 .danger-zone { margin-top: 22px; border-color: #7a2233; background: linear-gradient(145deg, #2a1220, #1a0c16); }
 .danger-button { margin-top: 15px; padding: 12px 22px; border-radius: 25px; background: linear-gradient(110deg, #d13a4e, #ff5d6c); color: white; font-weight: 700; box-shadow: 0 8px 22px rgba(209, 58, 78, 0.35); transition: 0.25s; }
 .danger-button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(209, 58, 78, 0.55); }
+
+/* ── Match Simulation ────────────────────────────── */
+.match-panel {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 35px;
+  text-align: center;
+  background: linear-gradient(145deg, #122d50, #0a1b35);
+  border: 1px solid #315b89;
+  border-radius: 22px;
+}
+
+.team-powers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  background: rgba(5, 24, 50, 0.5);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #24466b;
+}
+
+.power-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.power-box span { color: #8eb4dc; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+.power-box strong { font-size: 28px; color: white; }
+
+.vs-badge {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffd700;
+  background: #2a0505;
+  padding: 10px;
+  border-radius: 50%;
+  border: 2px solid #ff3d3d;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+}
+
+.match-action {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: #37b6ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.score-board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+  background: #06152c;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #24466b;
+}
+
+.score-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.score-team strong { font-size: 14px; color: #8eb4dc; }
+
+.score-num {
+  font-size: 46px;
+  font-weight: 900;
+  color: #ffd700;
+  line-height: 1;
+}
+
+.score-divider {
+  font-size: 30px;
+  font-weight: 900;
+  color: #315b89;
+}
+
+.match-msg {
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 15px;
+}
+
+.match-msg.win { color: #68dca9; }
+.match-msg.draw { color: #ffd35d; }
+.match-msg.loss { color: #ff8a95; }

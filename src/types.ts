@@ -6,6 +6,7 @@ export type Page =
   | "packs"
   | "daily"
   | "achievements"
+  | "match"
   | "settings";
 
 // ── Players & Rarity ──────────────────────────────────
@@ -130,3 +131,12 @@ export type AchievementId =
   | "squad-complete"
   | "veteran"
   | "streak-master";
+
+// ── Match Simulation ──────────────────────────────────
+export type MatchResult = {
+  playerScore: number;
+  opponentScore: number;
+  opponentName: string;
+  outcome: "win" | "draw" | "loss";
+  coinsEarned: number;
+};
