@@ -1,0 +1,43 @@
+import type { Formation, Slot } from "../types";
+
+export const FORMATIONS: Record<Formation, Slot[]> = {
+  "4-3-3": [
+    { id: "gk", position: "GK", x: 50, y: 90 },
+    { id: "lb", position: "LB", x: 12, y: 72 },
+    { id: "cb1", position: "CB", x: 37, y: 76 },
+    { id: "cb2", position: "CB", x: 63, y: 76 },
+    { id: "rb", position: "RB", x: 88, y: 72 },
+    { id: "cm1", position: "CM", x: 28, y: 50 },
+    { id: "cm2", position: "CM", x: 50, y: 56 },
+    { id: "cm3", position: "CM", x: 72, y: 50 },
+    { id: "lw", position: "LW", x: 18, y: 22 },
+    { id: "st", position: "ST", x: 50, y: 14 },
+    { id: "rw", position: "RW", x: 82, y: 22 },
+  ],
+  "4-4-2": [
+    { id: "gk", position: "GK", x: 50, y: 90 },
+    { id: "lb", position: "LB", x: 12, y: 72 },
+    { id: "cb1", position: "CB", x: 37, y: 76 },
+    { id: "cb2", position: "CB", x: 63, y: 76 },
+    { id: "rb", position: "RB", x: 88, y: 72 },
+    { id: "lm", position: "CM", x: 12, y: 48 },
+    { id: "cm1", position: "CM", x: 37, y: 52 },
+    { id: "cm2", position: "CM", x: 63, y: 52 },
+    { id: "rm", position: "CM", x: 88, y: 48 },
+    { id: "st1", position: "ST", x: 37, y: 20 },
+    { id: "st2", position: "ST", x: 63, y: 20 },
+  ],
+  "4-2-3-1": [
+    { id: "gk", position: "GK", x: 50, y: 90 },
+    { id: "lb", position: "LB", x: 12, y: 72 },
+    { id: "cb1", position: "CB", x: 37, y: 76 },
+    { id: "cb2", position: "CB", x: 63, y: 76 },
+    { id: "rb", position: "RB", x: 88, y: 72 },
+    { id: "cdm1", position: "CDM", x: 37, y: 56 },
+    { id: "cdm2", position: "CDM", x: 63, y: 56 },
+    { id: "lw", position: "LW", x: 20, y: 33 },
+    { id: "cam", position: "CAM", x: 50, y: 33 },
+    { id: "rw", position: "RW", x: 80, y: 33 },
+    { id: "st", position: "ST", x: 50, y: 12 },
+  ],
+};

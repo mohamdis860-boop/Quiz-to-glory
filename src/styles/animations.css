@@ -1,0 +1,105 @@
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes packPop { 0% { opacity: 0; transform: scale(0.6) rotate(-6deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+@keyframes cardPop { 0% { opacity: 0; transform: scale(0.5) translateY(50px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes revealFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Animations Classes */
+.hero-ball { animation: float 4s ease-in-out infinite; }
+.pack-result { animation: packPop 0.45s cubic-bezier(0.17, 0.89, 0.32, 1.28); }
+.pack-opening-anim { animation: shake 0.3s infinite; display: inline-block; }
+.pack-result-large { animation: cardPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.pack-reveal-container { animation: revealFadeIn 0.5s ease-out forwards; }
+
+/* Responsive (Media Queries) */
+@media (max-width: 768px) {
+  .topbar { padding: 12px 4%; }
+  .brand { font-size: 19px; gap: 7px; }
+  .brand-ball { font-size: 27px; }
+  .header-actions { gap: 10px; }
+  .coin-balance { padding: 8px 10px; gap: 5px; font-size: 12px; }
+  .profile { font-size: 0; gap: 0; }
+  .hero { min-height: 300px; padding: 45px 7%; }
+  .hero h1 { font-size: 42px; }
+  .hero-ball { font-size: 95px; position: absolute; right: 5%; bottom: 25px; opacity: 0.35; }
+  .hero-ball span { font-size: 30px; }
+  .hero-description { max-width: 85%; font-size: 13px; }
+  .stats { width: 92%; padding: 16px 8px; margin-bottom: 30px; }
+  .stat { gap: 7px; }
+  .stat-icon { font-size: 20px; }
+  .stat p { font-size: 10px; }
+  .stat strong { font-size: 15px; }
+  .section-heading { width: 90%; }
+  .feature-grid { width: 92%; gap: 13px; }
+  .feature-card { min-height: 220px; padding: 16px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .feature-art { font-size: 47px; align-self: center; }
+  .feature-info h3 { font-size: 18px; }
+  .feature-info p { font-size: 11px; }
+  .card-tag { font-size: 8px; }
+  .card-button { padding: 10px 12px; font-size: 10px; }
+  .footer { flex-wrap: wrap; padding: 20px 10px; gap: 9px; }
+  .bench-controls { flex-direction: column; }
+  .bench-sell { width: 22px; height: 22px; font-size: 10px; }
+  .pitch-slot { width: 56px; height: 56px; }
+  .slot-rating { font-size: 15px; }
+  .slot-name { font-size: 7px; max-width: 48px; }
+  .slot-position { font-size: 7px; }
+  .slot-chem { width: 18px; height: 18px; font-size: 8px; }
+  .squad-actions { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .streak-card { flex-wrap: wrap; }
+  .streak-reward { width: 100%; align-items: center; flex-direction: row; justify-content: space-between; }
+  .mission-row { flex-wrap: wrap; }
+  .mission-icon { font-size: 26px; }
+  .mission-action { width: 100%; text-align: right; }
+  .achievement-card { flex-wrap: wrap; }
+  .achievement-icon { font-size: 26px; width: 42px; height: 42px; }
+  .achievement-action { width: 100%; text-align: right; }
+}
+
+@media (max-width: 480px) {
+  .pity-row { grid-template-columns: 50px 1fr 65px; }
+  .pity-count { font-size: 10px; }
+  .resume-stats { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+  .brand { font-size: 16px; }
+  .coin-balance { font-size: 11px; }
+  .hero h1 { font-size: 35px; }
+  .hero { min-height: 280px; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .feature-card { min-height: 175px; flex-direction: row; align-items: center; padding: 18px; }
+  .feature-art { flex: 0 0 30%; font-size: 55px; }
+  .feature-info h3 { font-size: 19px; }
+  .feature-info p { font-size: 12px; }
+  .stats { width: 94%; }
+  .stat-icon { font-size: 17px; }
+  .stat p { font-size: 9px; }
+  .stat strong { font-size: 13px; }
+  .subpage { width: 92%; }
+  .subpage h1 { font-size: 30px; }
+  .quiz-panel, .pack-panel, .settings-panel { padding: 20px; }
+  .answer-grid { grid-template-columns: 1fr; }
+  .pitch-slot { width: 50px; height: 50px; }
+  .slot-rating { font-size: 14px; }
+  .slot-name { font-size: 6px; max-width: 42px; }
+  .slot-chem { width: 16px; height: 16px; font-size: 7px; }
+  .bench-grid { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+  .summary-value { font-size: 18px; }
+}
+@media (max-width: 768px) {
+  .header-player-name { display: none; }
+  .signout-button { padding: 8px 10px; font-size: 10px; }
+  .auth-card { padding: 30px 22px; }
+}
+@media (max-width: 420px) {
+  .topbar { gap: 8px; }
+  .header-actions { gap: 6px; }
+  .brand { font-size: 14px; }
+  .brand-ball { font-size: 22px; }
+  .coin-balance { padding: 7px 8px; }
+  .signout-button { padding: 7px 8px; font-size: 9px; }
+}

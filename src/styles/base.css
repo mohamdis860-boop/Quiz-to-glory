@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+  background: #06152c;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; background: #06152c; }
+button { font: inherit; cursor: pointer; border: none; }
